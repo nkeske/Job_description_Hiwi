@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Open Positions &ndash; CISPA GuardSphere</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --orange: #FF6B35;
+      --dark:   #111111;
+      --grey:   #2A2A2A;
+      --light:  #F5F5F0;
+      --white:  #FFFFFF;
+      --border: #E0DED8;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--light); color: var(--dark); line-height: 1.6; }
+
+    /* ── HERO ── */
+    .hero { background: var(--dark); color: var(--white); padding: 80px 40px 60px; position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; top: -80px; right: -80px; width: 400px; height: 400px; background: var(--orange); border-radius: 50%; opacity: 0.12; }
+    .hero::after  { content: ''; position: absolute; bottom: -120px; left: 30%; width: 300px; height: 300px; background: var(--orange); border-radius: 50%; opacity: 0.06; }
+    .hero-badge { display: inline-block; background: var(--orange); color: var(--white); font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 6px 16px; border-radius: 2px; margin-bottom: 28px; }
+    .hero h1 { font-size: clamp(2rem, 5vw, 3.8rem); font-weight: 900; line-height: 1.1; max-width: 860px; letter-spacing: -1.5px; }
+    .hero h1 span { color: var(--orange); }
+    .hero-sub { margin-top: 20px; font-size: 1.1rem; font-weight: 300; color: #AAAAAA; max-width: 640px; }
+
+    /* ── COUNT BAR ── */
+    .count-bar { background: var(--orange); padding: 18px 40px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .count-bar span { font-size: 0.88rem; font-weight: 700; color: var(--white); letter-spacing: 1px; text-transform: uppercase; }
+    .count-pills { display: flex; gap: 10px; margin-left: auto; flex-wrap: wrap; }
+    .count-pill { background: rgba(255,255,255,0.2); color: var(--white); font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 5px 14px; border-radius: 100px; }
+
+    /* ── SECTION TABS ── */
+    .section-tabs { background: var(--dark); padding: 0 40px; display: flex; gap: 0; overflow-x: auto; border-bottom: 2px solid #222; }
+    .section-tab { padding: 22px 32px; font-size: 0.9rem; font-weight: 700; color: #666; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; transition: color 0.2s, border-color 0.2s; text-transform: uppercase; letter-spacing: 1px; }
+    .section-tab:hover { color: #CCC; }
+    .section-tab.active { color: var(--white); border-bottom-color: var(--orange); }
+
+    /* ── SECTION PANELS ── */
+    .section-panel { display: none; }
+    .section-panel.active { display: block; }
+
+    /* ── SECTION INTRO BAR ── */
+    .section-intro { background: #1A1A1A; padding: 28px 40px; display: flex; align-items: center; gap: 20px; border-bottom: 3px solid var(--orange); }
+    .section-intro-icon { width: 48px; height: 48px; background: var(--orange); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
+    .section-intro-text h2 { font-size: 1.2rem; font-weight: 800; color: var(--white); letter-spacing: -0.3px; }
+    .section-intro-text p  { font-size: 0.88rem; color: #888; margin-top: 3px; }
+    .section-intro-count { margin-left: auto; background: var(--orange); color: var(--white); font-size: 0.8rem; font-weight: 700; padding: 6px 16px; border-radius: 2px; letter-spacing: 1px; text-transform: uppercase; white-space: nowrap; }
+
+    /* ── POSITION SUB-TABS ── */
+    .pos-tabs { background: var(--grey); padding: 0 40px; display: flex; overflow-x: auto; }
+    .pos-tab { padding: 16px 24px; font-size: 0.82rem; font-weight: 600; color: #888; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; transition: color 0.2s, border-color 0.2s; text-decoration: none; }
+    .pos-tab:hover { color: #CCC; }
+    .pos-tab.active { color: var(--white); border-bottom-color: var(--orange); }
+
+    /* ── POSITION PANELS ── */
+    .position { display: none; }
+    .position.active { display: block; }
+
+    /* ── META BAR ── */
+    .meta-bar { background: #1E1E1E; padding: 20px 40px; display: flex; flex-wrap: wrap; gap: 10px; border-bottom: 2px solid var(--orange); }
+    .chip { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: 100px; padding: 7px 16px; color: var(--white); font-size: 0.85rem; font-weight: 500; }
+
+    /* ── CONTENT CARDS ── */
+    .container { max-width: 900px; margin: 0 auto; padding: 56px 40px; display: grid; gap: 40px; }
+    .card { background: var(--white); border: 1px solid var(--border); border-radius: 4px; padding: 40px; }
+    .card-label { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--orange); margin-bottom: 12px; }
+    .card h2 { font-size: 1.55rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 20px; color: var(--dark); }
+    .card p { font-size: 0.97rem; color: #444; line-height: 1.75; }
+
+    .task-list { list-style: none; display: grid; gap: 12px; }
+    .task-list li { display: flex; gap: 14px; align-items: flex-start; font-size: 0.95rem; color: #333; line-height: 1.65; }
+    .task-list li::before { content: ''; flex-shrink: 0; width: 8px; height: 8px; margin-top: 7px; background: var(--orange); border-radius: 50%; }
+
+    .skill-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+    .skill-item { background: var(--light); border: 1px solid var(--border); border-radius: 4px; padding: 14px 16px; font-size: 0.88rem; font-weight: 500; color: var(--dark); display: flex; align-items: center; gap: 10px; line-height: 1.4; }
+    .skill-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--orange); flex-shrink: 0; }
+
+    .nice-label { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #888; border: 1px solid #CCC; border-radius: 2px; padding: 3px 10px; margin-bottom: 14px; margin-top: 26px; }
+
+    .callout { background: #FFF8F5; border-left: 4px solid var(--orange); border-radius: 0 4px 4px 0; padding: 20px 24px; font-size: 0.95rem; color: #333; line-height: 1.75; }
+    .callout strong { color: var(--dark); }
+
+    .offer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+    .offer-item { border-left: 3px solid var(--orange); padding: 14px 18px; background: var(--light); border-radius: 0 4px 4px 0; font-size: 0.91rem; color: #333; font-weight: 500; line-height: 1.5; }
+
+    .apply-card { background: var(--dark); color: var(--white); border-radius: 4px; padding: 48px 40px; text-align: center; }
+    .apply-card .card-label { color: var(--orange); }
+    .apply-card h2 { font-size: 1.9rem; font-weight: 900; letter-spacing: -1px; color: var(--white); margin-bottom: 16px; }
+    .apply-card p { color: #AAAAAA; font-size: 0.95rem; max-width: 560px; margin: 0 auto 32px; line-height: 1.75; }
+    .apply-btn { display: inline-block; background: var(--orange); color: var(--white); font-size: 0.95rem; font-weight: 700; letter-spacing: 0.5px; text-decoration: none; padding: 16px 36px; border-radius: 2px; transition: opacity 0.2s; }
+    .apply-btn:hover { opacity: 0.85; }
+
+    footer { text-align: center; padding: 24px 40px; font-size: 0.8rem; color: #999; border-top: 1px solid var(--border); }
+
+    @media (max-width: 600px) {
+      .hero, .count-bar, .section-tabs { padding-left: 20px; padding-right: 20px; }
+      .section-intro, .meta-bar { padding: 16px 20px; }
+      .container { padding: 32px 20px; }
+      .card { padding: 24px 18px; }
+      .pos-tabs { padding: 0 20px; }
+      .pos-tab { padding: 14px 12px; font-size: 0.76rem; }
+      .section-tab { padding: 18px 16px; font-size: 0.78rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════ HERO -->
+<header class="hero">
+  <div class="hero-badge">We Are Hiring</div>
+  <h1>All <span>Open Positions</span><br/>at CISPA GuardSphere</h1>
+  <p class="hero-sub">Student assistants, full-time engineers, and specialist consultants &mdash; join us at the forefront of OT/ICS cybersecurity.</p>
+</header>
+
+<!-- ═══════════════════════════════════════════════════ COUNT BAR -->
+<div class="count-bar">
+  <span>13 Open Positions Across 3 Categories</span>
+  <div class="count-pills">
+    <div class="count-pill">3 HiWi</div>
+    <div class="count-pill">3 Full-Time</div>
+    <div class="count-pill">7 Consultation</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ SECTION TABS -->
+<div class="section-tabs">
+  <div class="section-tab active" onclick="showSection('hiwi')">&#127979; HiWi Positions</div>
+  <div class="section-tab" onclick="showSection('fulltime')">&#128188; Full-Time Positions</div>
+  <div class="section-tab" onclick="showSection('consult')">&#128104;&#8205;&#128187; Consultation Positions</div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 1 — HiWi POSITIONS
+═══════════════════════════════════════════════════════════════════ -->
+<div class="section-panel active" id="sec-hiwi">
+
+  <div class="section-intro">
+    <div class="section-intro-icon">&#127979;</div>
+    <div class="section-intro-text">
+      <h2>Student Research Assistants (HiWi)</h2>
+      <p>Part-time research roles for enrolled students at CISPA, St. Ingbert</p>
+    </div>
+    <div class="section-intro-count">3 Open Positions</div>
+  </div>
+
+  <nav class="pos-tabs" id="hiwi-tabs">
+    <a class="pos-tab active" onclick="showPos('hiwi',0)" href="#">01 &mdash; Data Processing &amp; ML</a>
+    <a class="pos-tab" onclick="showPos('hiwi',1)" href="#">02 &mdash; Embedded Systems</a>
+    <a class="pos-tab" onclick="showPos('hiwi',2)" href="#">03 &mdash; Cybersecurity / OT</a>
+  </nav>
+
+  <!-- HiWi Position 1 -->
+  <div class="position active" id="hiwi-pos-0">
+    <div class="meta-bar">
+      <div class="chip">&#128204; Student Research Assistant (HiWi) (m/f/x)</div>
+      <div class="chip">&#128205; CISPA, St. Ingbert D0 Building</div>
+      <div class="chip">&#128197; Starting 01.06.2026</div>
+      <div class="chip">&#128338; 16 &ndash; 20 hrs / week</div>
+    </div>
+    <main class="container">
+      <div class="card">
+        <div class="card-label">About the Project</div>
+        <h2>Project Context</h2>
+        <p><strong>GuardSphere</strong> is an OT/ICS security monitoring system that detects intrusions in industrial control networks. We are building a machine learning pipeline to establish normal traffic baselines and flag anomalies in real-time sensor and device communication data.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Responsibilities</div>
+        <h2>Essential Tasks</h2>
+        <ul class="task-list">
+          <li>Collect and preprocess raw network traffic data (pcap / NetFlow / log files)</li>
+          <li>Perform exploratory data analysis (EDA) and feature engineering on network flow data</li>
+          <li>Implement and evaluate unsupervised ML models (Autoencoders, DBSCAN) for anomaly detection</li>
+          <li>Build baseline profiles of normal network behavior per device type or subnet</li>
+          <li>Document preprocessing pipelines and model experiments in reproducible notebooks</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-label">Requirements</div>
+        <h2>Your Profile</h2>
+        <div class="skill-grid">
+          <div class="skill-item"><div class="skill-dot"></div>CS / Data Science / Informatics enrollment</div>
+          <div class="skill-item"><div class="skill-dot"></div>Solid Python skills (pandas, scikit-learn, numpy)</div>
+          <div class="skill-item"><div class="skill-dot"></div>ML concepts &amp; Keras / TensorFlow experience</div>
+        </div>
+        <div class="nice-label">Nice to have</div>
+        <div class="skill-grid">
+          <div class="skill-item"><div class="skill-dot"></div>Network protocols (TCP/IP, Modbus, OPC-UA)</div>
+          <div class="skill-item"><div class="skill-dot"></div>Unsupervised learning &amp; model explainability</div>
+          <div class="skill-item"><div class="skill-dot"></div>OT/ICS or cybersecurity environments</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Benefits</div>
+        <h2>What We Offer</h2>
+        <div class="offer-grid">
+          <div class="offer-item">Research at the intersection of AI &amp; software security</div>
+          <div class="offer-item">Real-world, high-impact security challenges</div>
+          <div class="offer-item">Highly ambitious, research-driven team</div>
+          <div class="offer-item">Shape the future of intelligent security systems</div>
+          <div class="offer-item">Creative freedom in an international research environment</div>
+          <div class="offer-item">Strong work-life balance &amp; flexible working hours</div>
+          <div class="offer-item">Social and team-building activities</div>
+        </div>
+      </div>
+      <div class="apply-card">
+        <div class="card-label">Ready to Join?</div>
+        <h2>How to Apply</h2>
+        <p>Send your <strong>CV</strong> and your <strong>motivation</strong>. A short motivation video is very much appreciated (1&ndash;2 min explaining: <em>&ldquo;Why do you think you are the one for this position?&rdquo;</em>). Please include your current semester and any relevant coursework or projects.</p>
+        <a class="apply-btn" href="mailto:keske@cispa.de">Apply &rarr; keske@cispa.de</a>
+      </div>
+    </main>
+  </div>
+
+  <!-- HiWi Position 2 -->
+  <div class="position" id="hiwi-pos-1">
+    <div class="meta-bar">
+      <div class="chip">&#128204; Student Research Assistant (HiWi) (m/f/x)</div>
+      <div class="chip">&#128205; CISPA, St. Ingbert D0 Building</div>
+      <div class="chip">&#128295; Embedded Systems / Edge Computing</div>
+      <div class="chip">&#128338; 16 &ndash; 20 hrs / week</div>
+    </div>
+    <main class="container">
+      <div class="card">
+        <div class="card-label">About the Role</div>
+        <h2>Embedded Systems &amp; Edge Computing</h2>
+        <p>We&rsquo;re looking for a curious and hands-on student to help us explore and shape the embedded hardware side of our cybersecurity product. This role is ideal for someone who enjoys experimenting with hardware platforms, comparing technologies, and taking ownership of technical discovery.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Responsibilities</div>
+        <h2>What You&rsquo;ll Work On</h2>
+        <ul class="task-list">
+          <li>Explore and evaluate different embedded and edge hardware platforms for our product</li>
+          <li>Compare architectures based on performance, latency, reliability, security features, and cost</li>
+          <li>Set up test environments and run benchmarks on candidate devices</li>
+          <li>Investigate operating systems, firmware options, and lightweight deployment approaches</li>
+          <li>Prototype integrations between hardware, networking components, and software services</li>
+          <li>Experiment with hardware security capabilities such as TPMs, secure boot, trusted modules, and cryptographic acceleration</li>
+          <li>Support system optimization for real-world industrial environments</li>
+          <li>Document findings and help guide hardware selection and future technical direction</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-label">Requirements</div>
+        <h2>What We&rsquo;re Looking For</h2>
+        <div class="skill-grid">
+          <div class="skill-item"><div class="skill-dot"></div>Embedded systems, Linux &amp; computer architecture</div>
+          <div class="skill-item"><div class="skill-dot"></div>Hardware setup, system config &amp; troubleshooting</div>
+          <div class="skill-item"><div class="skill-dot"></div>Basic programming: Python / Bash / C/C++ (plus)</div>
+          <div class="skill-item"><div class="skill-dot"></div>Interest in edge computing &amp; secure systems</div>
+          <div class="skill-item"><div class="skill-dot"></div>Builder mindset &mdash; test, compare, learn by doing</div>
+          <div class="skill-item"><div class="skill-dot"></div>Independent &amp; ownership-oriented work style</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Why This Role</div>
+        <h2>What Makes This Role Exciting</h2>
+        <div class="callout">
+          This is <strong>not a narrow implementation role</strong>. You&rsquo;ll have room to experiment, lead technical exploration, and influence real product decisions. You may be testing completely different hardware approaches one week and shaping our future platform direction the next.<br/><br/>
+          If you enjoy discovering how systems work and helping define what should be built, you&rsquo;ll thrive here.
+        </div>
+      </div>
+      <div class="apply-card">
+        <div class="card-label">Ready to Join?</div>
+        <h2>How to Apply</h2>
+        <p>Send your <strong>CV</strong> and your <strong>motivation</strong>. A short motivation video is very much appreciated (1&ndash;2 min explaining: <em>&ldquo;Why do you think you are the one for this position?&rdquo;</em>). Please include your current semester and any relevant coursework or projects.</p>
+        <a class="apply-btn" href="mailto:keske@cispa.de">Apply &rarr; keske@cispa.de</a>
+      </div>
+    </main>
+  </div>
+
+  <!-- HiWi Position 3 -->
+  <div class="position" id="hiwi-pos-2">
+    <div class="meta-bar">
+      <div class="chip">&#128204; Student Research Assistant (HiWi) (m/f/x)</div>
+      <div class="chip">&#128205; CISPA, St. Ingbert D0 Building</div>
+      <div class="chip">&#128737; Cybersecurity / OT Security</div>
+      <div class="chip">&#128338; 16 &ndash; 20 hrs / week</div>
+    </div>
+    <main class="container">
+      <div class="card">
+        <div class="card-label">About the Role</div>
+        <h2>Cybersecurity / OT Security</h2>
+        <p>We&rsquo;re looking for a highly motivated student assistant to join us in building next-generation cybersecurity solutions for industrial systems. This is a hands-on technical role for someone who enjoys going deep, experimenting, and solving difficult security problems.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Responsibilities</div>
+        <h2>What You&rsquo;ll Work On</h2>
+        <ul class="task-list">
+          <li>Network traffic analysis and deep packet inspection (PCAP analysis, protocol inspection, anomaly identification)</li>
+          <li>Building and simulating lab environments for security testing and attack scenarios</li>
+          <li>Supporting penetration testing activities, vulnerability validation, and security assessments</li>
+          <li>Python programming for automation, data processing, tooling, and experimentation</li>
+          <li>Researching emerging threats, attack techniques, and defensive strategies in OT/ICS environments</li>
+          <li>Assisting with prototype testing, validation, and technical experimentation</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-label">Requirements</div>
+        <h2>What We&rsquo;re Looking For</h2>
+        <div class="skill-grid">
+          <div class="skill-item"><div class="skill-dot"></div>Networking fundamentals (TCP/IP, routing, VLANs, DNS)</div>
+          <div class="skill-item"><div class="skill-dot"></div>Packet analysis (Wireshark, tcpdump, PCAP)</div>
+          <div class="skill-item"><div class="skill-dot"></div>Good Python programming skills</div>
+          <div class="skill-item"><div class="skill-dot"></div>Pen testing, security tooling &amp; lab simulation</div>
+          <div class="skill-item"><div class="skill-dot"></div>Curiosity to explore new technical areas quickly</div>
+          <div class="skill-item"><div class="skill-dot"></div>Independent problem-solving mindset</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">A Word of Warning &mdash; and an Invitation</div>
+        <h2>Come Hungry</h2>
+        <div class="callout">
+          This is <strong>not an easy role</strong>. You&rsquo;ll be challenged, expected to learn fast, and pushed outside your comfort zone. But if you love cybersecurity, experimentation, and building real technical depth, you&rsquo;ll learn an incredible amount in a short time.<br/><br/>
+          <strong>Come hungry &mdash; be ready to eat, sleep, and breathe cybersecurity.</strong>
+        </div>
+      </div>
+      <div class="apply-card">
+        <div class="card-label">Ready to Join?</div>
+        <h2>How to Apply</h2>
+        <p>Send your <strong>CV</strong> and your <strong>motivation</strong>. A short motivation video is very much appreciated (1&ndash;2 min explaining: <em>&ldquo;Why do you think you are the one for this position?&rdquo;</em>). Please include your current semester and any relevant coursework or projects.</p>
+        <a class="apply-btn" href="mailto:keske@cispa.de">Apply &rarr; keske@cispa.de</a>
+      </div>
+    </main>
+  </div>
+
+</div><!-- /sec-hiwi -->
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 2 — FULL-TIME POSITIONS
+═══════════════════════════════════════════════════════════════════ -->
+<div class="section-panel" id="sec-fulltime">
+
+  <div class="section-intro">
+    <div class="section-intro-icon">&#128188;</div>
+    <div class="section-intro-text">
+      <h2>Full-Time Engineering Positions</h2>
+      <p>Permanent roles building the GuardSphere distributed industrial platform</p>
+    </div>
+    <div class="section-intro-count">3 Open Positions</div>
+  </div>
+
+  <nav class="pos-tabs" id="fulltime-tabs">
+    <a class="pos-tab active" onclick="showPos('fulltime',0)" href="#">01 &mdash; Full-Stack Engineer</a>
+    <a class="pos-tab" onclick="showPos('fulltime',1)" href="#">02 &mdash; Architecture Lead</a>
+    <a class="pos-tab" onclick="showPos('fulltime',2)" href="#">03 &mdash; Embedded Systems Engineer</a>
+  </nav>
+
+  <!-- Full-Time Position 1: Full-Stack Software Engineer -->
+  <div class="position active" id="fulltime-pos-0">
+    <div class="meta-bar">
+      <div class="chip">&#128188; Full-Time Position</div>
+      <div class="chip">&#128205; CISPA GuardSphere</div>
+      <div class="chip">&#128187; Go &amp; TypeScript</div>
+      <div class="chip">&#9881; Distributed Systems</div>
+    </div>
+    <main class="container">
+      <div class="card">
+        <div class="card-label">About the Role</div>
+        <h2>Full-Stack Software Engineer &ndash; Distributed Control Platform</h2>
+        <p>We are seeking a Full-Stack Software Engineer to contribute to the development of a distributed software platform consisting of a central control plane and intelligent, distributed agents deployed across industrial environments. This role focuses on building backend services in Go and web-based user interfaces in TypeScript, working closely with senior architects to deliver a scalable, maintainable platform.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Responsibilities</div>
+        <h2>Key Responsibilities</h2>
+        <div class="nice-label" style="margin-top:0">Backend Development (Go)</div>
+        <ul class="task-list">
+          <li>Design, develop, and maintain backend services written in Go (Golang)</li>
+          <li>Build APIs and services supporting orchestration, configuration management, and system state</li>
+          <li>Implement scalable and resilient distributed system workflows</li>
+          <li>Contribute to API design, data models, and service boundaries</li>
+        </ul>
+        <div class="nice-label">Frontend Development (TypeScript)</div>
+        <ul class="task-list">
+          <li>Develop web-based user interfaces using TypeScript and modern frontend frameworks (e.g. React)</li>
+          <li>Build reusable UI components and frontend application logic</li>
+          <li>Integrate frontend applications with backend APIs</li>
+          <li>Ensure performance, usability, and maintainability of frontend code</li>
+        </ul>
+        <div class="nice-label">Platform &amp; Engineering Practices</div>
+        <ul class="task-list">
+          <li>Collaborate with architects and engineers on system design and implementation</li>
+          <li>Participate in code reviews and technical discussions</li>
+          <li>Contribute to automated testing and CI/CD pipelines</li>
+          <li>Support integration with internal and external systems via APIs</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-label">Requirements</div>
+        <h2>Required Qualifications</h2>
+        <div class="skill-grid">
+          <div class="skill-item"><div class="skill-dot"></div>Professional experience as a Full-Stack Software Engineer</div>
+          <div class="skill-item"><div class="skill-dot"></div>Strong backend development in Go (Golang)</div>
+          <div class="skill-item"><div class="skill-dot"></div>Strong frontend experience in TypeScript</div>
+          <div class="skill-item"><div class="skill-dot"></div>API-driven systems (REST and/or gRPC)</div>
+          <div class="skill-item"><div class="skill-dot"></div>Software engineering fundamentals &amp; distributed systems</div>
+          <div class="skill-item"><div class="skill-dot"></div>Experience with databases and production systems</div>
+        </div>
+        <div class="nice-label">Nice to Have</div>
+        <div class="skill-grid">
+          <div class="skill-item"><div class="skill-dot"></div>Distributed, agent-based, or edge-deployed systems</div>
+          <div class="skill-item"><div class="skill-dot"></div>React or similar modern frontend frameworks</div>
+          <div class="skill-item"><div class="skill-dot"></div>Containerized environments</div>
+          <div class="skill-item"><div class="skill-dot"></div>Networking or systems-level concepts</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Benefits</div>
+        <h2>What We Offer</h2>
+        <div class="offer-grid">
+          <div class="offer-item">Opportunity to build a complex, long-term software platform</div>
+          <div class="offer-item">Collaboration with experienced architects and senior engineers</div>
+          <div class="offer-item">High degree of technical ownership and responsibility</div>
+          <div class="offer-item">Modern engineering tools and development practices</div>
+          <div class="offer-item">Professional, engineering-focused work environment</div>
+        </div>
+      </div>
+      <div class="apply-card">
+        <div class="card-label">Ready to Join?</div>
+        <h2>How to Apply</h2>
+        <p>Send your <strong>CV</strong> and a brief cover letter describing your relevant experience with Go and TypeScript. Include links to any relevant projects or portfolios. A short motivation video is very much appreciated (1&ndash;2 min explaining: <em>&ldquo;Why do you think you are the one for this position?&rdquo;</em>).</p>
+        <a class="apply-btn" href="mailto:keske@cispa.de">Apply &rarr; keske@cispa.de</a>
+      </div>
+    </main>
+  </div>
+
+  <!-- Full-Time Position 2: Architecture Lead -->
+  <div class="position" id="fulltime-pos-1">
+    <div class="meta-bar">
+      <div class="chip">&#128188; Full-Time Position</div>
+      <div class="chip">&#128205; CISPA GuardSphere</div>
+      <div class="chip">&#127963; System Architecture</div>
+      <div class="chip">&#9881; Distributed Platforms</div>
+    </div>
+    <main class="container">
+      <div class="card">
+        <div class="card-label">About the Role</div>
+        <h2>Architecture Lead &ndash; Distributed Control Platform</h2>
+        <p>The Lead Software Architecture Consultant is responsible for defining and designing the core software architecture for a distributed industrial firewall platform consisting of a central management/control plane and distributed intelligent agents deployed across industrial environments. You will own the end-to-end system architecture, establish the platform&rsquo;s technical direction, and work closely with engineering teams to ensure the architecture is implemented in a scalable, maintainable, and future-proof way.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Responsibilities</div>
+        <h2>Key Responsibilities</h2>
+        <div class="nice-label" style="margin-top:0">Architecture &amp; Technical Leadership</div>
+        <ul class="task-list">
+          <li>Define and own the overall architecture of a distributed control platform</li>
+          <li>Establish architectural principles, standards, and design guidelines</li>
+          <li>Lead architectural decisions across backend, frontend, and agent components</li>
+          <li>Act as the technical authority for system design and platform evolution</li>
+        </ul>
+        <div class="nice-label">Platform &amp; System Design</div>
+        <ul class="task-list">
+          <li>Design the control plane architecture, including core services, APIs, and data flows</li>
+          <li>Define the architecture for distributed agents, including lifecycle, communication, and autonomy</li>
+          <li>Ensure clear separation of responsibilities between control plane, agents, and user interfaces</li>
+          <li>Design for scalability, resilience, and fault tolerance</li>
+        </ul>
+        <div class="nice-label">Technology &amp; Implementation Guidance</div>
+        <ul class="task-list">
+          <li>Guide engineering teams in implementing backend services in Go (Golang)</li>
+          <li>Guide frontend architecture using TypeScript and modern frameworks (e.g. React)</li>
+          <li>Review designs and code to ensure alignment with architectural goals</li>
+          <li>Support integration patterns, API versioning, and backward compatibility</li>
+        </ul>
+        <div class="nice-label">Collaboration &amp; Enablement</div>
+        <ul class="task-list">
+          <li>Work closely with product, engineering, and platform teams</li>
+          <li>Provide architectural guidance during planning, development, and reviews</li>
+          <li>Mentor engineers and support technical decision-making</li>
+          <li>Align architectural decisions with business and operational requirements</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-label">Requirements</div>
+        <h2>Required Qualifications</h2>
+        <div class="skill-grid">
+          <div class="skill-item"><div class="skill-dot"></div>Extensive experience in software architecture or senior engineering</div>
+          <div class="skill-item"><div class="skill-dot"></div>Proven experience designing distributed systems or platform architectures</div>
+          <div class="skill-item"><div class="skill-dot"></div>Strong backend architecture experience using Go (Golang)</div>
+          <div class="skill-item"><div class="skill-dot"></div>Solid understanding of frontend architecture using TypeScript</div>
+          <div class="skill-item"><div class="skill-dot"></div>Experience designing API-driven systems (REST and/or gRPC)</div>
+          <div class="skill-item"><div class="skill-dot"></div>Strong understanding of scalability, availability, and maintainability</div>
+        </div>
+        <div class="nice-label">Nice to Have</div>
+        <div class="skill-grid">
+          <div class="skill-item"><div class="skill-dot"></div>Agent-based, edge, or control-plane architectures</div>
+          <div class="skill-item"><div class="skill-dot"></div>Event-driven or asynchronous systems</div>
+          <div class="skill-item"><div class="skill-dot"></div>Containerized or cloud-native environments</div>
+          <div class="skill-item"><div class="skill-dot"></div>Industrial, infrastructure, or platform software background</div>
+        </div>
+      </div>
+      <div class="apply-card">
+        <div class="card-label">Ready to Join?</div>
+        <h2>How to Apply</h2>
+        <p>Send your <strong>CV</strong> and a brief cover letter describing your architecture experience and examples of distributed systems you have designed or led. A short motivation video is very much appreciated (1&ndash;2 min explaining: <em>&ldquo;Why do you think you are the one for this position?&rdquo;</em>).</p>
+        <a class="apply-btn" href="mailto:keske@cispa.de">Apply &rarr; keske@cispa.de</a>
+      </div>
+    </main>
+  </div>
+
+  <!-- Full-Time Position 3: Embedded Systems Engineer -->
+  <div class="position" id="fulltime-pos-2">
+    <div class="meta-bar">
+      <div class="chip">&#128188; Full-Time Position</div>
+      <div class="chip">&#128205; CISPA GuardSphere</div>
+      <div class="chip">&#128295; Embedded Systems</div>
+      <div class="chip">&#9889; Hardware-Software Integration</div>
+    </div>
+    <main class="container">
+      <div class="card">
+        <div class="card-label">About the Role</div>
+        <h2>Embedded Systems Engineer &ndash; Hardware-Software Integration &amp; Performance Optimization</h2>
+        <p>We are looking for an Embedded Systems Engineer to optimize the hardware-software integration and performance of our distributed industrial platform. This role focuses on ensuring that software components, including agents and control-plane services, run efficiently and reliably on ruggedized, edge-deployed hardware. You will work closely with hardware, firmware, and software teams to analyze system behavior, identify bottlenecks, and implement optimizations that improve reliability, latency, and throughput.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Responsibilities</div>
+        <h2>Key Responsibilities</h2>
+        <div class="nice-label" style="margin-top:0">Hardware-Software Integration</div>
+        <ul class="task-list">
+          <li>Analyze and optimize interactions between hardware platforms and software agents</li>
+          <li>Ensure reliable operation across diverse industrial hardware configurations</li>
+          <li>Support integration of new hardware components into existing platform architecture</li>
+          <li>Collaborate with hardware and firmware engineers to align design decisions</li>
+        </ul>
+        <div class="nice-label">Performance Tuning</div>
+        <ul class="task-list">
+          <li>Profile and benchmark embedded and edge software components</li>
+          <li>Identify and eliminate performance bottlenecks in CPU, memory, I/O, and networking</li>
+          <li>Optimize real-time and near-real-time software execution on constrained devices</li>
+          <li>Propose improvements for energy efficiency, memory usage, and processing latency</li>
+        </ul>
+        <div class="nice-label">System Reliability &amp; Optimization</div>
+        <ul class="task-list">
+          <li>Support debugging and root-cause analysis for hardware-software issues</li>
+          <li>Ensure robust operation under challenging industrial environmental conditions</li>
+          <li>Collaborate with distributed systems and ML teams to optimize workloads at the edge</li>
+          <li>Provide recommendations for scalable, maintainable system design</li>
+        </ul>
+        <div class="nice-label">Documentation &amp; Knowledge Sharing</div>
+        <ul class="task-list">
+          <li>Document integration procedures, optimization techniques, and performance improvements</li>
+          <li>Contribute to system design reviews and technical decision-making</li>
+          <li>Share expertise to help standardize best practices across embedded and edge teams</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-label">Requirements</div>
+        <h2>Required Qualifications</h2>
+        <div class="skill-grid">
+          <div class="skill-item"><div class="skill-dot"></div>Proven experience in embedded systems engineering</div>
+          <div class="skill-item"><div class="skill-dot"></div>Strong programming in C/C++, Go, or similar for low-level systems</div>
+          <div class="skill-item"><div class="skill-dot"></div>Experience with hardware interfaces, peripherals, and device drivers</div>
+          <div class="skill-item"><div class="skill-dot"></div>Performance profiling, benchmarking, and optimization techniques</div>
+          <div class="skill-item"><div class="skill-dot"></div>Understanding of Linux-based systems and embedded platforms</div>
+        </div>
+        <div class="nice-label">Nice to Have</div>
+        <div class="skill-grid">
+          <div class="skill-item"><div class="skill-dot"></div>Industrial or edge computing platforms</div>
+          <div class="skill-item"><div class="skill-dot"></div>Containerized workloads in embedded environments</div>
+          <div class="skill-item"><div class="skill-dot"></div>Real-time operating systems (RTOS)</div>
+          <div class="skill-item"><div class="skill-dot"></div>Ruggedized hardware deployment and environmental constraints</div>
+        </div>
+      </div>
+      <div class="apply-card">
+        <div class="card-label">Ready to Join?</div>
+        <h2>How to Apply</h2>
+        <p>Send your <strong>CV</strong> and a brief cover letter describing your embedded systems experience and any relevant hardware-software integration projects. A short motivation video is very much appreciated (1&ndash;2 min explaining: <em>&ldquo;Why do you think you are the one for this position?&rdquo;</em>).</p>
+        <a class="apply-btn" href="mailto:keske@cispa.de">Apply &rarr; keske@cispa.de</a>
+      </div>
+    </main>
+  </div>
+
+</div><!-- /sec-fulltime -->
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 3 — CONSULTATION POSITIONS
+═══════════════════════════════════════════════════════════════════ -->
+<div class="section-panel" id="sec-consult">
+
+  <div class="section-intro">
+    <div class="section-intro-icon">&#128104;&#8205;&#128187;</div>
+    <div class="section-intro-text">
+      <h2>Specialist Consultation Positions</h2>
+      <p>Advisory and consulting roles shaping the GuardSphere platform strategy</p>
+    </div>
+    <div class="section-intro-count">7 Open Positions</div>
+  </div>
+
+  <nav class="pos-tabs" id="consult-tabs">
+    <a class="pos-tab active" onclick="showPos('consult',0)" href="#">01 &mdash; Hardware</a>
+    <a class="pos-tab" onclick="showPos('consult',1)" href="#">02 &mdash; OT Cybersecurity</a>
+    <a class="pos-tab" onclick="showPos('consult',2)" href="#">03 &mdash; Business Dev &amp; GTM</a>
+    <a class="pos-tab" onclick="showPos('consult',3)" href="#">04 &mdash; Machine Learning</a>
+    <a class="pos-tab" onclick="showPos('consult',4)" href="#">05 &mdash; Cryptographic Hardware</a>
+    <a class="pos-tab" onclick="showPos('consult',5)" href="#">06 &mdash; Legal &amp; IP</a>
+    <a class="pos-tab" onclick="showPos('consult',6)" href="#">07 &mdash; UX/UI Design</a>
+  </nav>
+
+  <!-- Consult Position 1: Hardware Consultant -->
+  <div class="position active" id="consult-pos-0">
+    <div class="meta-bar">
+      <div class="chip">&#128104;&#8205;&#128187; Consultation Role</div>
+      <div class="chip">&#128295; Ruggedized Hardware</div>
+      <div class="chip">&#128230; Supply Chain Evaluation</div>
+    </div>
+    <main class="container">
+      <div class="card">
+        <div class="card-label">About the Role</div>
+        <h2>Hardware Consultant &ndash; Ruggedized Platforms &amp; Supply Chain Evaluation</h2>
+        <p>We are seeking a Hardware Consultant to support the selection and evaluation of ruggedized hardware platforms for deployment in industrial and edge environments. This role focuses on hardware assessment, platform suitability, and supply-chain robustness, ensuring that selected hardware platforms meet the technical and operational demands of our product. The consultant will work closely with architecture, software, and procurement stakeholders to provide independent, technically grounded recommendations.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Responsibilities</div>
+        <h2>Key Responsibilities</h2>
+        <div class="nice-label" style="margin-top:0">Hardware Platform Selection</div>
+        <ul class="task-list">
+          <li>Evaluate and recommend ruggedized hardware platforms suitable for industrial and edge deployments</li>
+          <li>Assess hardware capabilities including CPU architecture, memory, storage, I/O, networking, and expansion options</li>
+          <li>Evaluate environmental specifications such as temperature range, vibration, shock, ingress protection, and power requirements</li>
+          <li>Ensure compatibility with Linux-based operating systems and containerized workloads</li>
+        </ul>
+        <div class="nice-label">Technical Assessment &amp; Validation</div>
+        <ul class="task-list">
+          <li>Review hardware documentation, datasheets, and reference designs</li>
+          <li>Validate platform suitability for long-running, always-on software agents</li>
+          <li>Identify hardware constraints, risks, and integration considerations</li>
+          <li>Support proof-of-concept and pilot hardware evaluations</li>
+        </ul>
+        <div class="nice-label">Supply Chain &amp; Lifecycle Evaluation</div>
+        <ul class="task-list">
+          <li>Assess supplier stability, manufacturing footprint, and long-term availability</li>
+          <li>Evaluate product lifecycle, end-of-life (EOL) risks, and replacement strategies</li>
+          <li>Review supply-chain dependencies, lead times, and sourcing risks</li>
+          <li>Provide guidance on multi-vendor or fallback strategies</li>
+        </ul>
+        <div class="nice-label">Advisory &amp; Documentation</div>
+        <ul class="task-list">
+          <li>Provide clear, vendor-neutral recommendations and comparison analyses</li>
+          <li>Document selection criteria, evaluation results, and decision rationale</li>
+          <li>Advise on hardware standardization and platform strategy</li>
+          <li>Support alignment between technical requirements and procurement processes</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-label">Requirements</div>
+        <h2>Required Qualifications</h2>
+        <div class="skill-grid">
+          <div class="skill-item"><div class="skill-dot"></div>Strong experience in industrial or embedded hardware evaluation</div>
+          <div class="skill-item"><div class="skill-dot"></div>Proven experience selecting ruggedized or industrial-grade hardware</div>
+          <div class="skill-item"><div class="skill-dot"></div>Solid understanding of CPU architectures (x86, ARM), peripherals, and networking</div>
+          <div class="skill-item"><div class="skill-dot"></div>Experience evaluating hardware for Linux-based systems</div>
+          <div class="skill-item"><div class="skill-dot"></div>Familiarity with industrial deployment constraints and edge environments</div>
+        </div>
+        <div class="nice-label">Nice to Have</div>
+        <div class="skill-grid">
+          <div class="skill-item"><div class="skill-dot"></div>Industrial PCs (IPCs), edge gateways, or embedded platforms</div>
+          <div class="skill-item"><div class="skill-dot"></div>Regulated or long-lifecycle industries</div>
+          <div class="skill-item"><div class="skill-dot"></div>Hardware certification and compliance requirements</div>
+          <div class="skill-item"><div class="skill-dot"></div>Consulting or advisory background</div>
+        </div>
+      </div>
+      <div class="apply-card">
+        <div class="card-label">Ready to Join?</div>
+        <h2>How to Apply</h2>
+        <p>Send your <strong>CV</strong> and a brief description of hardware platforms you have evaluated and recommended for industrial deployments. A short motivation video is very much appreciated (1&ndash;2 min explaining: <em>&ldquo;Why do you think you are the one for this position?&rdquo;</em>).</p>
+        <a class="apply-btn" href="mailto:keske@cispa.de">Apply &rarr; keske@cispa.de</a>
+      </div>
+    </main>
+  </div>
+
+  <!-- Consult Position 2: OT Cybersecurity Consultant -->
+  <div class="position" id="consult-pos-1">
+    <div class="meta-bar">
+      <div class="chip">&#128104;&#8205;&#128187; Consultation Role</div>
+      <div class="chip">&#128737; OT / ICS Cybersecurity</div>
+      <div class="chip">&#127981; Industrial Environments</div>
+    </div>
+    <main class="container">
+      <div class="card">
+        <div class="card-label">About the Role</div>
+        <h2>OT Cyber Security Consultant &ndash; Customer &amp; Product Advisory</h2>
+        <p>We are looking for an OT Cyber Security Consultant to advise on how our platform should be positioned, adapted, and applied when working with industrial and operational technology (OT) customers. This role focuses on sharing real-world OT experience, understanding customer environments, and helping translate client expectations, constraints, and operational realities into product requirements and design guidance. It is not a hands-on security operations or monitoring role.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Responsibilities</div>
+        <h2>Key Responsibilities</h2>
+        <div class="nice-label" style="margin-top:0">Customer &amp; Industry Advisory</div>
+        <ul class="task-list">
+          <li>Provide expert insight into how OT organizations operate, make decisions, and adopt new technology</li>
+          <li>Advise on typical OT customer concerns, constraints, and expectations related to cybersecurity</li>
+          <li>Share best practices for engaging with OT stakeholders (engineering, operations, maintenance, management)</li>
+          <li>Help shape customer-facing approaches based on real-world OT experience</li>
+        </ul>
+        <div class="nice-label">Product Guidance &amp; Feedback</div>
+        <ul class="task-list">
+          <li>Translate OT customer needs into clear input for product and architecture teams</li>
+          <li>Advise on usability, operational fit, and deployment models from an OT perspective</li>
+          <li>Identify potential adoption barriers and recommend design or workflow adjustments</li>
+          <li>Review product concepts and designs for alignment with OT realities</li>
+        </ul>
+        <div class="nice-label">Standards &amp; Industry Context</div>
+        <ul class="task-list">
+          <li>Provide guidance on relevant OT cybersecurity standards and practices (e.g. IEC 62443, Purdue Model)</li>
+          <li>Advise on how standards influence customer expectations without driving compliance activities</li>
+          <li>Help ensure the product aligns with common OT security frameworks and language</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-label">Requirements</div>
+        <h2>Required Qualifications</h2>
+        <div class="skill-grid">
+          <div class="skill-item"><div class="skill-dot"></div>Proven experience in OT or industrial cybersecurity environments</div>
+          <div class="skill-item"><div class="skill-dot"></div>Hands-on exposure to manufacturing, energy, utilities, or critical infrastructure</div>
+          <div class="skill-item"><div class="skill-dot"></div>Experience interacting directly with OT customers and stakeholders</div>
+          <div class="skill-item"><div class="skill-dot"></div>Strong understanding of OT operational constraints and decision-making</div>
+          <div class="skill-item"><div class="skill-dot"></div>Ability to communicate complex OT concepts to product and engineering teams</div>
+        </div>
+        <div class="nice-label">Nice to Have</div>
+        <div class="skill-grid">
+          <div class="skill-item"><div class="skill-dot"></div>Consulting or advisory background in OT cybersecurity</div>
+          <div class="skill-item"><div class="skill-dot"></div>Experience supporting product development or solution design</div>
+          <div class="skill-item"><div class="skill-dot"></div>Familiarity with ICS/SCADA environments</div>
+          <div class="skill-item"><div class="skill-dot"></div>Bridging communication between OT, IT, and product teams</div>
+        </div>
+      </div>
+      <div class="apply-card">
+        <div class="card-label">Ready to Join?</div>
+        <h2>How to Apply</h2>
+        <p>Send your <strong>CV</strong> and a brief description of your OT cybersecurity experience and the types of industrial customers you have worked with. A short motivation video is very much appreciated (1&ndash;2 min explaining: <em>&ldquo;Why do you think you are the one for this position?&rdquo;</em>).</p>
+        <a class="apply-btn" href="mailto:keske@cispa.de">Apply &rarr; keske@cispa.de</a>
+      </div>
+    </main>
+  </div>
+
+  <!-- Consult Position 3: Business Development & GTM -->
+  <div class="position" id="consult-pos-2">
+    <div class="meta-bar">
+      <div class="chip">&#128104;&#8205;&#128187; Consultation Role</div>
+      <div class="chip">&#128200; Go-To-Market Strategy</div>
+      <div class="chip">&#127981; Industrial &amp; OT Markets</div>
+    </div>
+    <main class="container">
+      <div class="card">
+        <div class="card-label">About the Role</div>
+        <h2>Business Development &amp; Go-To-Market Consultant</h2>
+        <p>We are seeking a Business Development &amp; Go-To-Market (GTM) Consultant to help define and refine the market approach for a distributed software platform serving industrial and operational technology (OT) customers. This role is advisory in nature and focuses on market insight, customer engagement models, and go-to-market strategy, rather than direct sales execution. The consultant will work closely with product, architecture, and leadership teams to ensure the product is positioned and introduced effectively to the right customers.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Responsibilities</div>
+        <h2>Key Responsibilities</h2>
+        <div class="nice-label" style="margin-top:0">Go-To-Market Strategy</div>
+        <ul class="task-list">
+          <li>Advise on go-to-market models suitable for industrial and OT customers</li>
+          <li>Help define target customer segments, buyer personas, and adoption paths</li>
+          <li>Recommend market entry strategies, including phased rollout and pilot programs</li>
+          <li>Advise on pricing, packaging, and positioning at a strategic level</li>
+        </ul>
+        <div class="nice-label">Business Development Advisory</div>
+        <ul class="task-list">
+          <li>Provide guidance on how to engage with prospective customers and partners</li>
+          <li>Advise on enterprise and industrial buying processes</li>
+          <li>Support definition of partner and ecosystem strategies (integrators, OEMs, technology partners)</li>
+          <li>Share best practices for early customer acquisition and reference building</li>
+        </ul>
+        <div class="nice-label">Messaging &amp; Positioning</div>
+        <ul class="task-list">
+          <li>Help shape clear, credible product messaging for technical and non-technical audiences</li>
+          <li>Review and refine customer-facing narratives, presentations, and materials</li>
+          <li>Ensure consistency between product capabilities and market communication</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-label">Requirements</div>
+        <h2>Required Qualifications</h2>
+        <div class="skill-grid">
+          <div class="skill-item"><div class="skill-dot"></div>Proven experience in business development, GTM, or product marketing</div>
+          <div class="skill-item"><div class="skill-dot"></div>Experience with industrial, OT, or B2B enterprise customers</div>
+          <div class="skill-item"><div class="skill-dot"></div>Strong understanding of complex, technical product sales environments</div>
+          <div class="skill-item"><div class="skill-dot"></div>Experience advising or supporting early-stage or evolving products</div>
+          <div class="skill-item"><div class="skill-dot"></div>Effective communication with technical, commercial, and executive stakeholders</div>
+        </div>
+        <div class="nice-label">Nice to Have</div>
+        <div class="skill-grid">
+          <div class="skill-item"><div class="skill-dot"></div>Consulting or advisory background</div>
+          <div class="skill-item"><div class="skill-dot"></div>Experience launching platform or infrastructure software products</div>
+          <div class="skill-item"><div class="skill-dot"></div>Experience with system integrators or industrial partners</div>
+          <div class="skill-item"><div class="skill-dot"></div>Understanding of long sales cycles and enterprise procurement</div>
+        </div>
+      </div>
+      <div class="apply-card">
+        <div class="card-label">Ready to Join?</div>
+        <h2>How to Apply</h2>
+        <p>Send your <strong>CV</strong> and a brief overview of your GTM or business development experience in industrial or B2B technology markets. A short motivation video is very much appreciated (1&ndash;2 min explaining: <em>&ldquo;Why do you think you are the one for this position?&rdquo;</em>).</p>
+        <a class="apply-btn" href="mailto:keske@cispa.de">Apply &rarr; keske@cispa.de</a>
+      </div>
+    </main>
+  </div>
+
+  <!-- Consult Position 4: Machine Learning Consultant -->
+  <div class="position" id="consult-pos-3">
+    <div class="meta-bar">
+      <div class="chip">&#128104;&#8205;&#128187; Consultation Role</div>
+      <div class="chip">&#129504; Machine Learning &amp; XAI</div>
+      <div class="chip">&#128225; Federated Learning</div>
+    </div>
+    <main class="container">
+      <div class="card">
+        <div class="card-label">About the Role</div>
+        <h2>Machine Learning Consultant &ndash; Anomaly Detection &amp; Explainable AI</h2>
+        <p>We are seeking a Machine Learning Consultant to provide expertise in anomaly detection, federated learning, and explainable AI (XAI) for a distributed industrial control platform. This role is advisory and design-focused, helping to define ML strategies, algorithms, and architecture, and ensuring that AI/ML features are practical, interpretable, and deployable in industrial and edge environments.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Responsibilities</div>
+        <h2>Key Responsibilities</h2>
+        <div class="nice-label" style="margin-top:0">ML Architecture &amp; Strategy</div>
+        <ul class="task-list">
+          <li>Advise on design and integration of anomaly detection pipelines in distributed systems</li>
+          <li>Recommend federated learning strategies for edge-deployed agents while preserving data locality</li>
+          <li>Define approaches for explainable AI, ensuring outputs are interpretable and actionable for OT stakeholders</li>
+          <li>Provide guidance on model lifecycle, training, evaluation, and deployment</li>
+        </ul>
+        <div class="nice-label">Algorithm &amp; Model Development</div>
+        <ul class="task-list">
+          <li>Recommend suitable ML algorithms for detecting anomalies in industrial processes</li>
+          <li>Advise on hybrid approaches combining supervised, unsupervised, and semi-supervised methods</li>
+          <li>Guide on feature engineering, data pre-processing, and model validation for OT datasets</li>
+          <li>Support experimentation and prototyping for feasibility studies</li>
+        </ul>
+        <div class="nice-label">Edge &amp; Distributed AI</div>
+        <ul class="task-list">
+          <li>Advise on agent-side inference and lightweight ML deployment strategies</li>
+          <li>Recommend methods for distributed model updates and federated aggregation</li>
+          <li>Ensure models are robust to intermittent connectivity and resource-constrained environments</li>
+        </ul>
+        <div class="nice-label">Explainable AI &amp; Insights</div>
+        <ul class="task-list">
+          <li>Define methods to make anomaly detection and predictions interpretable to engineers and operators</li>
+          <li>Support development of visualization, reporting, and alerting mechanisms</li>
+          <li>Ensure AI/ML outputs are actionable, trustworthy, and aligned with operational constraints</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-label">Requirements</div>
+        <h2>Required Qualifications</h2>
+        <div class="skill-grid">
+          <div class="skill-item"><div class="skill-dot"></div>Strong experience in ML for industrial or operational data</div>
+          <div class="skill-item"><div class="skill-dot"></div>Hands-on experience with anomaly detection algorithms</div>
+          <div class="skill-item"><div class="skill-dot"></div>Experience with federated learning frameworks and distributed ML</div>
+          <div class="skill-item"><div class="skill-dot"></div>Knowledge of XAI techniques (SHAP, LIME, counterfactual explanations)</div>
+          <div class="skill-item"><div class="skill-dot"></div>Familiarity with edge and distributed computing constraints</div>
+          <div class="skill-item"><div class="skill-dot"></div>Strong Python skills (TensorFlow, PyTorch, or Scikit-learn)</div>
+        </div>
+        <div class="nice-label">Nice to Have</div>
+        <div class="skill-grid">
+          <div class="skill-item"><div class="skill-dot"></div>Time-series data from industrial sensors or IoT devices</div>
+          <div class="skill-item"><div class="skill-dot"></div>OT environments, ICS/SCADA systems, or industrial protocols</div>
+          <div class="skill-item"><div class="skill-dot"></div>Cloud-edge hybrid ML deployments</div>
+          <div class="skill-item"><div class="skill-dot"></div>Experience guiding or consulting on ML strategy</div>
+        </div>
+      </div>
+      <div class="apply-card">
+        <div class="card-label">Ready to Join?</div>
+        <h2>How to Apply</h2>
+        <p>Send your <strong>CV</strong> and a brief description of your ML experience, particularly in anomaly detection and federated learning for industrial or edge environments. A short motivation video is very much appreciated (1&ndash;2 min explaining: <em>&ldquo;Why do you think you are the one for this position?&rdquo;</em>).</p>
+        <a class="apply-btn" href="mailto:keske@cispa.de">Apply &rarr; keske@cispa.de</a>
+      </div>
+    </main>
+  </div>
+
+  <!-- Consult Position 5: Cryptographic Hardware -->
+  <div class="position" id="consult-pos-4">
+    <div class="meta-bar">
+      <div class="chip">&#128104;&#8205;&#128187; Consultation Role</div>
+      <div class="chip">&#128274; Cryptographic Hardware</div>
+      <div class="chip">&#127981; Industrial Platforms</div>
+    </div>
+    <main class="container">
+      <div class="card">
+        <div class="card-label">About the Role</div>
+        <h2>Cryptographic Hardware Developer &amp; Consultant &ndash; Industrial Platforms</h2>
+        <p>We are seeking a developer and consultant specialising in cryptographic hardware security to work on a cutting-edge platform for industrial control systems. You will provide expertise in trusted execution environments, secure aggregation, and privacy-preserving computation, bridging cryptography and industrial deployment.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Requirements</div>
+        <h2>Required Qualifications</h2>
+        <div class="skill-grid">
+          <div class="skill-item"><div class="skill-dot"></div>Strong experience in hardware security, cryptography, or secure system design</div>
+          <div class="skill-item"><div class="skill-dot"></div>Hands-on experience with TEEs (Intel SGX, AMD SEV, ARM TrustZone, etc.)</div>
+          <div class="skill-item"><div class="skill-dot"></div>Experience implementing additive homomorphic encryption or secure aggregation</div>
+          <div class="skill-item"><div class="skill-dot"></div>Solid programming in C/C++, Go, or Rust for system-level integration</div>
+          <div class="skill-item"><div class="skill-dot"></div>Understanding of ICS/OT operational constraints and industrial deployment</div>
+          <div class="skill-item"><div class="skill-dot"></div>Experience in threat modeling, secure pipeline design, and privacy-preserving computation</div>
+        </div>
+        <div class="nice-label">Nice to Have</div>
+        <div class="skill-grid">
+          <div class="skill-item"><div class="skill-dot"></div>Conceptual understanding of federated learning workflows</div>
+          <div class="skill-item"><div class="skill-dot"></div>Familiarity with fully homomorphic encryption (FHE)</div>
+          <div class="skill-item"><div class="skill-dot"></div>Experience with edge AI or distributed data pipelines</div>
+          <div class="skill-item"><div class="skill-dot"></div>Knowledge of ICS/OT security standards and best practices</div>
+          <div class="skill-item"><div class="skill-dot"></div>Advisory roles bridging cryptography and industrial deployment</div>
+        </div>
+      </div>
+      <div class="apply-card">
+        <div class="card-label">Ready to Join?</div>
+        <h2>How to Apply</h2>
+        <p>Send your <strong>CV</strong> and a brief summary of your cryptographic hardware or TEE experience and how it relates to industrial or ICS/OT environments. A short motivation video is very much appreciated (1&ndash;2 min explaining: <em>&ldquo;Why do you think you are the one for this position?&rdquo;</em>).</p>
+        <a class="apply-btn" href="mailto:keske@cispa.de">Apply &rarr; keske@cispa.de</a>
+      </div>
+    </main>
+  </div>
+
+  <!-- Consult Position 6: Legal & IP Strategy -->
+  <div class="position" id="consult-pos-5">
+    <div class="meta-bar">
+      <div class="chip">&#128104;&#8205;&#128187; Consultation Role</div>
+      <div class="chip">&#9878; Legal &amp; IP Strategy</div>
+      <div class="chip">&#128196; Patents &amp; Licensing</div>
+    </div>
+    <main class="container">
+      <div class="card">
+        <div class="card-label">About the Role</div>
+        <h2>Legal &amp; IP Strategy Consultant &ndash; Industrial Technology Platforms</h2>
+        <p>We are seeking a Legal &amp; IP Strategy professional to define and execute the intellectual property and legal strategy for a cutting-edge industrial technology platform. The role focuses on protecting proprietary methods, patents, and contractual agreements. This role will work closely with R&amp;D, architecture, and leadership teams to provide practical, actionable legal guidance, focusing on patent filings, licensing, and contracts in industrial and software environments.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Responsibilities</div>
+        <h2>Key Responsibilities</h2>
+        <div class="nice-label" style="margin-top:0">Intellectual Property Strategy</div>
+        <ul class="task-list">
+          <li>Define and execute the IP strategy to protect proprietary technologies, algorithms, and methods</li>
+          <li>Identify invention disclosures and guide patent filings from concept to submission</li>
+          <li>Advise on patent portfolio management and competitive IP monitoring</li>
+          <li>Collaborate with R&amp;D and engineering teams to document and protect innovations</li>
+        </ul>
+        <div class="nice-label">Legal &amp; Contractual Advisory</div>
+        <ul class="task-list">
+          <li>Draft, review, and negotiate contracts, NDAs, licensing agreements, and partnerships</li>
+          <li>Provide legal guidance for collaborations with industrial and OT clients</li>
+          <li>Advise on compliance, risk management, and contractual obligations related to IP</li>
+          <li>Support licensing and commercialisation strategies for proprietary technology</li>
+        </ul>
+        <div class="nice-label">Strategic Consulting</div>
+        <ul class="task-list">
+          <li>Provide actionable advice to management on IP risk, protection, and enforcement</li>
+          <li>Monitor industry trends and emerging IP-related regulations</li>
+          <li>Develop internal processes to ensure IP awareness and compliance across teams</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-label">Requirements</div>
+        <h2>Required Qualifications</h2>
+        <div class="skill-grid">
+          <div class="skill-item"><div class="skill-dot"></div>Legal degree with specialisation in IP, technology law, or patent law</div>
+          <div class="skill-item"><div class="skill-dot"></div>Proven experience in IP strategy, patent filings, and portfolio management</div>
+          <div class="skill-item"><div class="skill-dot"></div>Experience drafting and negotiating contracts in technology or industrial sectors</div>
+          <div class="skill-item"><div class="skill-dot"></div>Strong understanding of patent law, IP enforcement, and licensing agreements</div>
+          <div class="skill-item"><div class="skill-dot"></div>Ability to translate technical innovations into IP strategy</div>
+        </div>
+        <div class="nice-label">Nice to Have</div>
+        <div class="skill-grid">
+          <div class="skill-item"><div class="skill-dot"></div>Experience in industrial technology, software, or OT/ICS environments</div>
+          <div class="skill-item"><div class="skill-dot"></div>Exposure to international patent law and cross-border IP management</div>
+          <div class="skill-item"><div class="skill-dot"></div>Experience with open-source compliance and software licensing</div>
+          <div class="skill-item"><div class="skill-dot"></div>Prior advisory experience for startups or high-tech R&amp;D teams</div>
+        </div>
+      </div>
+      <div class="apply-card">
+        <div class="card-label">Ready to Join?</div>
+        <h2>How to Apply</h2>
+        <p>Send your <strong>CV</strong> and a brief description of your IP strategy and patent filing experience, particularly in technology or industrial contexts. A short motivation video is very much appreciated (1&ndash;2 min explaining: <em>&ldquo;Why do you think you are the one for this position?&rdquo;</em>).</p>
+        <a class="apply-btn" href="mailto:keske@cispa.de">Apply &rarr; keske@cispa.de</a>
+      </div>
+    </main>
+  </div>
+
+  <!-- Consult Position 7: UX/UI Designer -->
+  <div class="position" id="consult-pos-6">
+    <div class="meta-bar">
+      <div class="chip">&#128104;&#8205;&#128187; Consultation Role</div>
+      <div class="chip">&#127912; UX/UI Design</div>
+      <div class="chip">&#127981; Industrial Software Platform</div>
+    </div>
+    <main class="container">
+      <div class="card">
+        <div class="card-label">About the Role</div>
+        <h2>UX/UI Product Experience Designer &ndash; Industrial Software Platform</h2>
+        <p>We are looking for a UX/UI Product Experience Designer to define and own the user experience of a complex industrial software platform. This role bridges product vision, user needs, and technical implementation, ensuring that the platform is intuitive, efficient, and aligned with real-world industrial workflows. You will translate user stories and business requirements into user journeys, interaction flows, wireframes, and high-fidelity designs, and collaborate closely with back-end and front-end developers to implement them.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Responsibilities</div>
+        <h2>Key Responsibilities</h2>
+        <div class="nice-label" style="margin-top:0">User Experience Design</div>
+        <ul class="task-list">
+          <li>Develop and define user stories, scenarios, and journeys to capture real-world workflows</li>
+          <li>Design interaction flows, wireframes, and prototypes for web and desktop interfaces</li>
+          <li>Ensure the user experience supports usability, accessibility, and operational efficiency in industrial contexts</li>
+          <li>Conduct user research and usability testing to validate designs and iterate on improvements</li>
+        </ul>
+        <div class="nice-label">UI Design</div>
+        <ul class="task-list">
+          <li>Create high-fidelity UI designs, mockups, and style guides aligned with platform branding</li>
+          <li>Define layout, navigation, and visual hierarchy for optimal user comprehension</li>
+          <li>Collaborate with front-end developers to ensure accurate implementation of designs</li>
+          <li>Establish UI patterns and reusable components to maintain consistency</li>
+        </ul>
+        <div class="nice-label">Collaboration &amp; Product Alignment</div>
+        <ul class="task-list">
+          <li>Work closely with product managers, architects, and back-end developers</li>
+          <li>Translate complex industrial workflows into intuitive and efficient interfaces</li>
+          <li>Participate in design reviews, sprint planning, and backlog refinement</li>
+          <li>Advocate for users in all design and implementation decisions</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-label">Requirements</div>
+        <h2>Required Qualifications</h2>
+        <div class="skill-grid">
+          <div class="skill-item"><div class="skill-dot"></div>Proven experience in UX/UI design for complex applications or enterprise software</div>
+          <div class="skill-item"><div class="skill-dot"></div>Strong skills in user research, journey mapping, wireframing, and prototyping</div>
+          <div class="skill-item"><div class="skill-dot"></div>Experience with design systems, UI frameworks, and interaction design best practices</div>
+          <div class="skill-item"><div class="skill-dot"></div>Excellent collaboration with product, engineering, and business teams</div>
+          <div class="skill-item"><div class="skill-dot"></div>Proficiency with Figma, Sketch, Adobe XD, or similar tools</div>
+        </div>
+        <div class="nice-label">Nice to Have</div>
+        <div class="skill-grid">
+          <div class="skill-item"><div class="skill-dot"></div>Experience defining user stories, scenarios, and acceptance criteria</div>
+          <div class="skill-item"><div class="skill-dot"></div>Knowledge of accessibility standards and usability heuristics</div>
+          <div class="skill-item"><div class="skill-dot"></div>Exposure to front-end development (HTML, CSS, JS/TS)</div>
+          <div class="skill-item"><div class="skill-dot"></div>Experience designing dashboards or monitoring/control interfaces</div>
+        </div>
+      </div>
+      <div class="apply-card">
+        <div class="card-label">Ready to Join?</div>
+        <h2>How to Apply</h2>
+        <p>Send your <strong>CV</strong> and a <strong>portfolio link</strong> showcasing your UX/UI work, particularly for complex or enterprise-grade applications. A short motivation video is very much appreciated (1&ndash;2 min explaining: <em>&ldquo;Why do you think you are the one for this position?&rdquo;</em>).</p>
+        <a class="apply-btn" href="mailto:keske@cispa.de">Apply &rarr; keske@cispa.de</a>
+      </div>
+    </main>
+  </div>
+
+</div><!-- /sec-consult -->
+
+
+<footer>
+  &copy; 2026 CISPA Helmholtz Center for Information Security &nbsp;&middot;&nbsp; GuardSphere Research Group
+</footer>
+
+<script>
+  var posState = { hiwi: 0, fulltime: 0, consult: 0 };
+
+  function showSection(key) {
+    var keys = ['hiwi', 'fulltime', 'consult'];
+    keys.forEach(function(k) {
+      document.getElementById('sec-' + k).classList.toggle('active', k === key);
+    });
+    document.querySelectorAll('.section-tab').forEach(function(t, i) {
+      t.classList.toggle('active', keys[i] === key);
+    });
+  }
+
+  function showPos(section, index) {
+    posState[section] = index;
+    var tabs = document.querySelectorAll('#' + section + '-tabs .pos-tab');
+    tabs.forEach(function(t, i) { t.classList.toggle('active', i === index); });
+    var panels = document.querySelectorAll('#sec-' + section + ' .position');
+    panels.forEach(function(p, i) { p.classList.toggle('active', i === index); });
+  }
+
+  document.querySelectorAll('.pos-tab, .section-tab').forEach(function(tab) {
+    tab.addEventListener('click', function(e) { e.preventDefault(); });
+  });
+</script>
+
+</body>
+</html>
